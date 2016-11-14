@@ -3,7 +3,7 @@
 import { isNumeric, matchBeginAndEnd, startsWithQuotes, stripBeginAndEnd }
 from './utils';
 import Tokenizer from './tokenizer';
-import type { Token } from './types';
+import type { Token, TokenType } from './types';
 
 const ops = { equals:'eq', greaterThan:'gt', lessThan:'lt'}
 const keywords = ['and', 'or', 'true', 'false', 'today', 'tomorrow', 'yesterday'];
@@ -26,7 +26,7 @@ export default class Scanner {
 
       // Symbols
       if(symbols.some((k) => k === token)) {
-        tokens.push({ type:'symbol', value: token})
+        tokens.push({ type: 'symbol', value: token})
       }
       // Keywords
       else if(keywords.some((k) => k === token)) {
