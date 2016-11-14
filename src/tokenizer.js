@@ -1,12 +1,16 @@
+/* @flow */
 
-function isWhiteSpace(text) {
+function isWhiteSpace(text: string) {
   // Consider checking other chars [Tabs, nonBreakingSpace, newLine, etc]
   // and perhaps by charCode (more reliable?)
   return text === ' ';
 }
 
 export default class Tokenizer {
-  constructor(expression){
+  expression: string;
+  currentIndex: number;
+
+  constructor(expression: string){
     this.expression = expression;
     this.currentIndex = 0;
   }
@@ -15,7 +19,7 @@ export default class Tokenizer {
     return this.expression.charAt(this.currentIndex);
   }
 
-  hasNext() {
+  hasNext(): boolean {
     return this.currentIndex <= this.expression.length;
   }
 
@@ -31,7 +35,7 @@ export default class Tokenizer {
     }
   }
 
-  getNextToken() {
+  getNextToken(): string| boolean {
     if(!this.hasNext()) return false;
 
     this.consumeWhiteSpace();
