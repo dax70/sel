@@ -6,6 +6,7 @@ import type {
   NodeKind,
   Node,
   Expression,
+  ConstantExpression,
   MemberExpression,
   UnaryExpression,
   BinaryExpression
@@ -34,7 +35,7 @@ export default class Parser {
 
   parse() {
     let token;
-    
+
     while (token = this.getNextToken()) {
         this.expression = this.parseToken(token);
     }
@@ -48,6 +49,9 @@ export default class Parser {
       switch (type) {
         case 'identifier':
           return this.consumeMember(token);
+        case 'number':
+        case 'literal':
+            return this.createConstant(token);
         case 'symbol':
 
           break;
@@ -56,6 +60,14 @@ export default class Parser {
         default:
 
       }
+    }
+  }
+
+  createConstant(token: ConstantExpression) {
+    return {
+      kind: 'constant',
+      value: token.value,
+      type: token.type
     }
   }
 
@@ -93,7 +105,7 @@ export default class Parser {
 
     let binaryExp: BinaryExpression = {
       left: leftExp,
-      kind: this.convertOp(token.type),
+      kind: this.convertOp(token.value),
       right: rightExp
     }
 

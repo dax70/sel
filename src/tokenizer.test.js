@@ -1,4 +1,4 @@
-
+/* @flow */
 import expect from 'expect';
 import Tokenizer from './tokenizer';
 
