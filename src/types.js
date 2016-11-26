@@ -12,4 +12,4 @@ const TokenTypeValues = {
 export type TokenType = $Keys<typeof TokenTypeValues>;
 export type TokenError = { error: string };
 
-export type Token = { type: TokenType, value: string } | TokenError;
+export type Token = { type: TokenType, value: string };

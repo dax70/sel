@@ -3,7 +3,7 @@
 import { isNumeric, matchBeginAndEnd, startsWithQuotes, stripBeginAndEnd }
 from './utils';
 import Tokenizer from './tokenizer';
-import type { Token, TokenType } from './types';
+import type { Token, TokenType, TokenError } from './types';
 
 const ops = { equals:'eq', greaterThan:'gt', lessThan:'lt'}
 const keywords = ['and', 'or', 'true', 'false', 'today', 'tomorrow', 'yesterday'];
@@ -14,7 +14,7 @@ export default class Scanner {
   }
 
   scan(expression: string) {
-    let tokens: Array<Token> = [];
+    let tokens: Array<Token | TokenError> = [];
 
     let tokenizer = new Tokenizer(expression);
 
@@ -54,7 +54,7 @@ export default class Scanner {
     return tokens;
   }
 
-  scanBody(token:string, tokens: Array<Token>) {
+  scanBody(token:string, tokens: Array<Token | TokenError>) {
     switch (token) {
       case ops.equals:
       case ops.greaterThan:

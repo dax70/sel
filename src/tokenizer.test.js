@@ -12,7 +12,7 @@ describe('Tokenizer tests', () => {
 
     let end = tokenizer.getNextToken();
 
-    expect('foo').toEqual(actual);
+    expect(expected).toEqual(actual);
     expect(end).toBeFalsy();
   })
 

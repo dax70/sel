@@ -2,47 +2,102 @@
 
 import type {Token, TokenType, TokenError} from './types';
 
-const NodeKindValues = {
-  member: 'member',
-  equals: 'equals',
-  greaterThan: 'greaterThan',
-  lessThan: 'lessThan',
-  and:'and',
-  or:'or'
-}
-
-type NodeKind = $Keys<typeof NodeKindValues>;
-
-type Node = { kind: NodeKind }
-interface Expression extends Node {}
-interface MemberExpression extends Node { member: string }
-interface UnaryExpression extends Expression { node: Expression }
-interface BinaryNode extends Expression { right:Expression, left: Expression }
+import type {
+  NodeKind,
+  Node,
+  Expression,
+  MemberExpression,
+  UnaryExpression,
+  BinaryExpression
+} from './expressions'
 
 export default class Parser {
 
-  parse(tokens: Array<Token>) {
-    let expressions: Array<Expression> = [];
+  currentIndex: number;
+  tokens: Array<Token>;
+  expression: Expression;
 
-    for(let token of tokens) {
-      if(token.type) {
-        const type = token.type;
-        switch (type) {
-          case 'identifier':
-            let member: MemberExpression = { member: token.value, kind: NodeKindValues.member}
-            expressions.push(member)
-            break;
-          case 'symbol':
+  constructor(tokens: Array<Token>) {
+    this.currentIndex = 0;
+    this.tokens = tokens;
+  }
 
-            break;
-          case 'keyword':
-            break;
-          case 'op':
-            break;
-          default:
+  hasNext(): boolean {
+    return this.currentIndex <= this.tokens.length;
+  }
 
-        }
+  getNextToken(): ?Token {
+    if(!this.hasNext()) return null;
+
+    return this.tokens[this.currentIndex++];
+  }
+
+  parse() {
+    let token;
+    
+    while (token = this.getNextToken()) {
+        this.expression = this.parseToken(token);
+    }
+
+    return this.expression;
+  }
+
+  parseToken(token: Token) {
+    if(token) {
+      const {type, value} = (token: Token);
+      switch (type) {
+        case 'identifier':
+          return this.consumeMember(token);
+        case 'symbol':
+
+          break;
+        case 'keyword':
+          break;
+        default:
+
       }
     }
   }
+
+  consumeMember(token: Token): Expression {
+    let expression: MemberExpression = {
+      member: token.value,
+      kind: 'member'
+    };
+
+    let nextToken = this.getNextToken();
+
+    if(nextToken) {
+      switch (nextToken.type) {
+        case 'op':
+          let binaryExp = this.buildOpExpression(expression, nextToken)
+          return binaryExp;
+      }
+    }
+
+    return expression;
+  }
+
+  convertOp(op: string): NodeKind {
+    // Flow casting
+    return ((op: any) : NodeKind);
+  }
+
+  buildOpExpression(leftExp: Expression, token: Token) {
+    // parse right
+    const nextToken = this.getNextToken();
+
+    if(!nextToken) throw new Error('right side of expression expected');
+
+    const rightExp = this.parseToken(nextToken);
+
+    let binaryExp: BinaryExpression = {
+      left: leftExp,
+      kind: this.convertOp(token.type),
+      right: rightExp
+    }
+
+    return binaryExp;
+  }
+
 }
